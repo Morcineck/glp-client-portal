@@ -1,5 +1,6 @@
 package com.glp.client_portal.economia;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class EconomiaController {
     public ResponseEntity<Economia> calcularEconomia(
             @PathVariable UUID clienteId,
             @PathVariable UUID contratoId,
-            @RequestBody Economia economia) {
+            @Valid @RequestBody Economia economia) {
 
         Economia navaEconomia = economiaService.calcularEconomia(contratoId, economia);
         return ResponseEntity.status(HttpStatus.CREATED).body(navaEconomia);

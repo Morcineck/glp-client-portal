@@ -1,5 +1,6 @@
 package com.glp.client_portal.contrato;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class ContratoController {
     private ContratoService contratoService;
 
     @PostMapping
-    public ResponseEntity<Contrato> criar(@PathVariable UUID clienteId, @RequestBody Contrato contrato) {
+    public ResponseEntity<Contrato> criar(@PathVariable UUID clienteId, @Valid @RequestBody Contrato contrato) {
         Contrato novoContrato = contratoService.salvar(clienteId, contrato);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoContrato);
     }
