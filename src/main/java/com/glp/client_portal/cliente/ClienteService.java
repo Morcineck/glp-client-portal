@@ -40,7 +40,7 @@ public class ClienteService {
     }
 
     public void deletar(UUID id) {
-        Cliente cliente = buscarPorId(id);
+        buscarPorId(id); // valida que o cliente existe antes de deletar
         clienteRepository.deleteById(id);
     }
 }
