@@ -1,5 +1,6 @@
 package com.glp.client_portal.cliente;
 
+import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,8 @@ public class ClienteService {
     }
 
     public Cliente buscarPorId(UUID id) {
-        return clienteRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        return clienteRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Cliente não encontrado"));
     }
 
     public Cliente atualizar(UUID id, Cliente clienteAtualizado) {
@@ -38,6 +40,7 @@ public class ClienteService {
     }
 
     public void deletar(UUID id) {
+        Cliente cliente = buscarPorId(id);
         clienteRepository.deleteById(id);
     }
 }

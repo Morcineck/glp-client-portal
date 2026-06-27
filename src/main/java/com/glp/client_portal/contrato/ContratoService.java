@@ -2,6 +2,7 @@ package com.glp.client_portal.contrato;
 
 import com.glp.client_portal.cliente.Cliente;
 import com.glp.client_portal.cliente.ClienteService;
+import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,14 @@ public class ContratoService {
     }
 
     public List<Contrato> listarPorCliente(UUID clienteId) {
+        clienteService.buscarPorId(clienteId);
         return contratoRepository.findByClienteId(clienteId);
     }
 
     public Contrato buscarPorId(UUID id) {
         return contratoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contrato não encontrado!"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Contrato com ID [" + id + "] não existe na base de dados."));
     }
 
 }
