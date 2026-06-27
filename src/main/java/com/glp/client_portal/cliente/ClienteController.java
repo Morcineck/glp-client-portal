@@ -1,5 +1,6 @@
 package com.glp.client_portal.cliente;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/clientes")
@@ -16,7 +18,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<Cliente> cadastrar(@RequestBody Cliente cliente){
+    public ResponseEntity<Cliente> cadastrar(@Valid @RequestBody Cliente cliente){
         Cliente novoCliente = clienteService.salvar(cliente);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
     }
@@ -32,7 +34,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> atualizar(@PathVariable UUID id, @RequestBody Cliente cliente){
+    public ResponseEntity<Cliente> atualizar(@PathVariable UUID id, @Valid @RequestBody Cliente cliente){
         return ResponseEntity.ok(clienteService.atualizar(id, cliente));
     }
 
