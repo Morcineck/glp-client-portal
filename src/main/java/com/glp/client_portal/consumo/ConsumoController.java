@@ -1,5 +1,6 @@
 package com.glp.client_portal.consumo;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class ConsumoController {
     public ResponseEntity<ConsumoMensal> registrarConsumo(
             @PathVariable UUID clienteId,
             @PathVariable UUID contratoId,
-            @RequestBody ConsumoMensal consumo) {
+            @Valid @RequestBody ConsumoMensal consumo) {
 
         ConsumoMensal novoConsumo = consumoService.registrarConsumo(contratoId, consumo);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoConsumo);
