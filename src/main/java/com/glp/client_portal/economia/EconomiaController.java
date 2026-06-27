@@ -30,7 +30,7 @@ public class EconomiaController {
     public ResponseEntity<List<Economia>> listarEconomia(
             @PathVariable UUID clienteId,
             @PathVariable UUID contratoId) {
-        return ResponseEntity.ok(economiaService.listaPorContrato(contratoId));
+        return ResponseEntity.ok(economiaService.listarPorContrato(contratoId));
     }
 
     @GetMapping("/clientes/{clienteId}/total-economizado")
