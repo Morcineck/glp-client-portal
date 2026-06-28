@@ -2,7 +2,7 @@
  
 Sistema backend desenvolvido em Java com Spring Boot para a **GLP Consultoria Energética**, permitindo que clientes acompanhem informações sobre seus contratos de energia, consumo mensal e economia gerada.
  
-Projeto desenvolvido como Trabalho de Conclusão de Curso (TCC) do curso **Javanauta**.
+Projeto desenvolvido para a empresa **GLP Consultoria**.
  
 ---
  
