@@ -186,12 +186,18 @@ Todo Pull Request direcionado à `main` dispara automaticamente um workflow de b
 ---
  
 ## 🗺️ Roadmap futuro
- 
+
+####  Próximas melhorias
 - [ ] Autenticação e autorização (Spring Security + JWT)
 - [ ] Frontend web para consumo da API
 - [ ] Documentação interativa da API (Swagger/OpenAPI)
 - [ ] Testes automatizados (JUnit/Mockito)
 - [ ] Integração com gateway de pagamento
+
+####  Próximas funcionalidades
+- [ ] Frontend web para consumo da API
+- [ ] Integração com gateway de pagamento
+
 ---
  
 ## 👤 Autor
