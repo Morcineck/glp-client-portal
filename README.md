@@ -2,7 +2,7 @@
  
 Sistema backend desenvolvido em Java com Spring Boot para a **GLP Consultoria Energética**, permitindo que clientes acompanhem informações sobre seus contratos de energia, consumo mensal e economia gerada.
  
-Projeto desenvolvido para a empresa **GLP Consultoria**.
+Projeto desenvolvido para a empresa **GLP Consultoria**. O código-fonte disponibilizado representa a camada backend da aplicação e não contém informações sensíveis, credenciais ou dados de clientes.
  
 ---
  
