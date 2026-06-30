@@ -62,7 +62,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 
-    // 4. Captura QUALQUER outro erro inesperado (NullPointer, banco fora, etc.) (Status 500)
+    // 500 - qualquer erro inesperado
+    @ExceptionHandler(IllegalArgumentBusinessException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+            IllegalArgumentBusinessException ex, HttpServletRequest request) {
+
+        ErrorResponse erro = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Regra de negócio violada",
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    // Captura QUALQUER outro erro inesperado (NullPointer, banco fora, etc.) (Status 500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex,
                                                                HttpServletRequest request) {
