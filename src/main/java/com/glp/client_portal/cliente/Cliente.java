@@ -1,7 +1,9 @@
 package com.glp.client_portal.cliente;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.glp.client_portal.usuario.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +11,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -43,4 +47,10 @@ public class Cliente {
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dataCadastro;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente")
+    @lombok.ToString.Exclude
+    @lombok.EqualsAndHashCode.Exclude
+    private List<Usuario> usuarios = new ArrayList<>();
 }
