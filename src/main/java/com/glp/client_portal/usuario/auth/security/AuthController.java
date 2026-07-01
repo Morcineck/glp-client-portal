@@ -1,8 +1,8 @@
 package com.glp.client_portal.usuario.auth.security;
 
 
-import com.glp.client_portal.usuario.auth.security.dto.LoginRequest;
-import com.glp.client_portal.usuario.auth.security.dto.LoginResponse;
+import com.glp.client_portal.usuario.auth.dto.LoginRequest;
+import com.glp.client_portal.usuario.auth.dto.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
