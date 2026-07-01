@@ -2,6 +2,7 @@ package com.glp.client_portal.cliente;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.glp.client_portal.usuario.Usuario;
 import jakarta.persistence.*;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @JsonPropertyOrder({"id", "nome", "email", "telefone", "documento", "tipoDocumento", "dataCadastro"})
 @Table(name = "cliente")
