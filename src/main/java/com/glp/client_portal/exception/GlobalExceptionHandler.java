@@ -4,15 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import org.springframework.security.access.AccessDeniedException;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -40,7 +38,7 @@ public class GlobalExceptionHandler {
                         error.getField(),
                         error.getDefaultMessage()
                 ))
-                .collect(Collectors.toList());
+                .toList();
 
         ErrorResponse erro = new ErrorResponse(
                 LocalDateTime.now(),
@@ -85,6 +83,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex,
                                                                HttpServletRequest request) {
+        ex.printStackTrace(); // ← debug temporario
         ErrorResponse erro = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
