@@ -3,6 +3,7 @@ package com.glp.client_portal.economia;
 import com.glp.client_portal.cliente.ClienteRepository;
 import com.glp.client_portal.contrato.Contrato;
 import com.glp.client_portal.contrato.ContratoRepository;
+import com.glp.client_portal.economia.dto.CalcularEconomiaRequest;
 import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,15 @@ public class EconomiaService {
     private ClienteRepository clienteRepository;
 
 
-    public Economia calcularEconomia(UUID contratoId, Economia economia) {
+    public Economia calcularEconomia(UUID contratoId, CalcularEconomiaRequest request) {
         Contrato contrato = contratoRepository.findById(contratoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Contrato não encontrado"));
+
+        Economia economia = new Economia();
         economia.setContrato(contrato);
+        economia.setMesReferencia(request.mesReferencia());
+        economia.setCustoAntes(request.custoAntes());
+        economia.setCustoDepois(request.custoDepois());
         economia.setEconomiaGerada(economia.getCustoAntes().subtract(economia.getCustoDepois()));
 
         return economiaRepository.save(economia);

@@ -34,3 +34,5 @@ build/
 
 ### Application properties (contém credenciais sensíveis) ###
 application.properties
+### Variaveis de ambiente (credenciais) ###
+.env

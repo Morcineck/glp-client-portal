@@ -2,6 +2,7 @@ package com.glp.client_portal.contrato;
 
 import com.glp.client_portal.cliente.Cliente;
 import com.glp.client_portal.cliente.ClienteService;
+import com.glp.client_portal.contrato.dto.CriarContratoRequest;
 import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,16 @@ public class ContratoService {
     @Autowired
     private ClienteService clienteService;
 
-    public Contrato salvar(UUID clienteId, Contrato contrato) {
+    public Contrato salvar(UUID clienteId, CriarContratoRequest request) {
         Cliente cliente = clienteService.buscarPorId(clienteId);
+        Contrato contrato = new Contrato();
         contrato.setCliente(cliente);
+        contrato.setTipoContrato(request.tipoContrato());
+        contrato.setDataInicio(request.dataInicio());
+        contrato.setDataFim(request.dataFim());
+        contrato.setValorMensal(request.valorMensal());
+        contrato.setConsumoAntesKwh(request.consumoAntesKwh());
+        contrato.setConsumoAtualKwh(request.consumoAtualKwh());
         return contratoRepository.save(contrato);
     }
 

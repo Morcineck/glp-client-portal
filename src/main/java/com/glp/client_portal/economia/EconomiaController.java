@@ -1,9 +1,9 @@
 package com.glp.client_portal.economia;
 
+import com.glp.client_portal.economia.dto.CalcularEconomiaRequest;
 import com.glp.client_portal.usuario.auth.security.AccessValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,29 +31,25 @@ public class EconomiaController {
 
 
     @Operation(summary = "Calcular economia", description = "Calcula e registra a economia referente ao contrato informado.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Calculo gerado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "401", description = "Token inválido ou não informado"),
-            @ApiResponse(responseCode = "403", description = "Acesso negado")
-    })
+    @ApiResponse(responseCode = "201", description = "Calculo gerado com sucesso")
+    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    @ApiResponse(responseCode = "401", description = "Token inválido ou não informado")
+    @ApiResponse(responseCode = "403", description = "Acesso negado")
     @PostMapping("/clientes/{clienteId}/contratos/{contratoId}/economias")
     public ResponseEntity<Economia> calcularEconomia(
             @PathVariable UUID clienteId,
             @PathVariable UUID contratoId,
-            @Valid @RequestBody Economia economia,
+            @Valid @RequestBody CalcularEconomiaRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
         accessValidator.validarAcessoCliente(userDetails, clienteId);
 
-        Economia navaEconomia = economiaService.calcularEconomia(contratoId, economia);
+        Economia navaEconomia = economiaService.calcularEconomia(contratoId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(navaEconomia);
     }
 
     @Operation(summary = "Listar economia", description = "ADMIN vê todos. CLIENTE vê apenas o próprio.")
-    @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+    @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
     @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
-    })
     @GetMapping("/clientes/{clienteId}/contratos/{contratoId}/economias")
     public ResponseEntity<List<Economia>> listarEconomia(
             @PathVariable UUID clienteId,
@@ -64,12 +60,10 @@ public class EconomiaController {
     }
 
     @Operation(summary = "Calcular economia total")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Calculo gerado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "401", description = "Token inválido ou não informado"),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
-    })
+    @ApiResponse(responseCode = "200", description = "Calculo gerado com sucesso")
+    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    @ApiResponse(responseCode = "401", description = "Token inválido ou não informado")
+    @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     @GetMapping("/clientes/{clienteId}/total-economizado")
     public ResponseEntity<BigDecimal> totalEconomizado(
             @PathVariable UUID clienteId,

@@ -1,5 +1,7 @@
 package com.glp.client_portal.cliente;
 
+import com.glp.client_portal.cliente.dto.AtualizarClienteRequest;
+import com.glp.client_portal.cliente.dto.CriarClienteRequest;
 import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,13 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public Cliente salvar(Cliente cliente) {
+    public Cliente salvar(CriarClienteRequest request) {
+        Cliente cliente = new Cliente();
+        cliente.setNome(request.nome());
+        cliente.setEmail(request.email());
+        cliente.setTelefone(request.telefone());
+        cliente.setDocumento(request.documento());
+        cliente.setTipoDocumento(request.tipoDocumento());
         cliente.setDataCadastro(LocalDateTime.now());
         return clienteRepository.save(cliente);
     }
@@ -29,13 +37,13 @@ public class ClienteService {
                 -> new ResourceNotFoundException("Cliente não encontrado"));
     }
 
-    public Cliente atualizar(UUID id, Cliente clienteAtualizado) {
+    public Cliente atualizar(UUID id, AtualizarClienteRequest request) {
         Cliente cliente = buscarPorId(id);
-        cliente.setNome(clienteAtualizado.getNome());
-        cliente.setEmail(clienteAtualizado.getEmail());
-        cliente.setTelefone(clienteAtualizado.getTelefone());
-        cliente.setDocumento(clienteAtualizado.getDocumento());
-        cliente.setTipoDocumento(clienteAtualizado.getTipoDocumento());
+        cliente.setNome(request.nome());
+        cliente.setEmail(request.email());
+        cliente.setTelefone(request.telefone());
+        cliente.setDocumento(request.documento());
+        cliente.setTipoDocumento(request.tipoDocumento());
         return clienteRepository.save(cliente);
     }
 

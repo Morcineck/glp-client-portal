@@ -37,5 +37,4 @@ public class Economia {
     private BigDecimal custoDepois;
     private BigDecimal economiaGerada;
 
-
 }

@@ -1,9 +1,10 @@
 package com.glp.client_portal.cliente;
 
+import com.glp.client_portal.cliente.dto.AtualizarClienteRequest;
+import com.glp.client_portal.cliente.dto.CriarClienteRequest;
 import com.glp.client_portal.usuario.auth.security.AccessValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,14 +32,14 @@ public class ClienteController {
 
 
     @Operation(summary = "Cadastrar cliente", description = "Cadastra um novo cliente no sistema. Acesso restrito ao perfil ADMIN.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "401", description = "Token inválido ou não informado"),
-            @ApiResponse(responseCode = "403", description = "Acesso negado")})
+
+    @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso")
+    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    @ApiResponse(responseCode = "401", description = "Token inválido ou não informado")
+    @ApiResponse(responseCode = "403", description = "Acesso negado")
     @PostMapping
-    public ResponseEntity<Cliente> cadastrar(@Valid @RequestBody Cliente cliente) {
-        Cliente novoCliente = clienteService.salvar(cliente);
+    public ResponseEntity<Cliente> cadastrar(@Valid @RequestBody CriarClienteRequest request) {
+        Cliente novoCliente = clienteService.salvar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
     }
 
@@ -60,12 +61,10 @@ public class ClienteController {
     }
 
     @Operation(summary = "Buscar cliente por ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
-            @ApiResponse(responseCode = "403", description = "Acesso negado"),
-            @ApiResponse(responseCode = "401", description = "Token inválido ou não informado"),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
-    })
+    @ApiResponse(responseCode = "200", description = "Cliente encontrado")
+    @ApiResponse(responseCode = "403", description = "Acesso negado")
+    @ApiResponse(responseCode = "401", description = "Token inválido ou não informado")
+    @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> buscarPorId(@PathVariable UUID id,
                                                @AuthenticationPrincipal UserDetails userDetails) {
@@ -74,22 +73,18 @@ public class ClienteController {
     }
 
     @Operation(summary = "Atualizar cliente")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cliente atualizado"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
-    })
+    @ApiResponse(responseCode = "200", description = "Cliente atualizado")
+    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> atualizar(@PathVariable UUID id,
-                                             @Valid @RequestBody Cliente cliente) {
-        return ResponseEntity.ok(clienteService.atualizar(id, cliente));
+                                             @Valid @RequestBody AtualizarClienteRequest request) {
+        return ResponseEntity.ok(clienteService.atualizar(id, request));
     }
 
     @Operation(summary = "Deletar cliente")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Cliente removido"),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
-    })
+    @ApiResponse(responseCode = "204", description = "Cliente removido")
+    @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable UUID id) {
         clienteService.deletar(id);
