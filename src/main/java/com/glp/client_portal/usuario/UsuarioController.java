@@ -5,7 +5,6 @@ import com.glp.client_portal.usuario.dto.AlterarSenhaRequest;
 import com.glp.client_portal.usuario.dto.CriarUsuarioRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,11 +27,9 @@ public class UsuarioController {
 
 
     @Operation(summary = "Cadastrar usuário", description = "Cria um novo usuário. Acesso restrito a ADMIN.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "403", description = "Acesso negado")
-    })
+    @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso")
+    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    @ApiResponse(responseCode = "403", description = "Acesso negado")
     @PostMapping
     public ResponseEntity<Usuario> cadastrar(
             @Valid @RequestBody CriarUsuarioRequest request) {
@@ -42,12 +39,10 @@ public class UsuarioController {
 
 
     @Operation(summary = "Alterar senha")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Senha alterada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "401", description = "Token inválido ou não informado"),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
-    })
+    @ApiResponse(responseCode = "204", description = "Senha alterada com sucesso")
+    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    @ApiResponse(responseCode = "401", description = "Token inválido ou não informado")
+    @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     @PatchMapping("/alterar_senha")
     public ResponseEntity<Void> alterarSenha(
             @Valid @RequestBody AlterarSenhaRequest request,

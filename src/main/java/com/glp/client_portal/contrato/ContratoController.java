@@ -1,9 +1,9 @@
 package com.glp.client_portal.contrato;
 
+import com.glp.client_portal.contrato.dto.CriarContratoRequest;
 import com.glp.client_portal.usuario.auth.security.AccessValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,28 +31,25 @@ public class ContratoController {
 
 
     @Operation(summary = "Cadastrar contrato", description = "Cria um novo contrato. Acesso restrito a ADMIN.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Contrato registrado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "401", description = "Token inválido ou não informado"),
-            @ApiResponse(responseCode = "403", description = "Acesso negado")
-    })
+    @ApiResponse(responseCode = "201", description = "Contrato registrado com sucesso")
+    @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    @ApiResponse(responseCode = "401", description = "Token inválido ou não informado")
+    @ApiResponse(responseCode = "403", description = "Acesso negado")
     @PostMapping
     public ResponseEntity<Contrato> criar(
             @PathVariable UUID clienteId,
-            @Valid @RequestBody Contrato contrato,
+            @Valid @RequestBody CriarContratoRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
         accessValidator.validarAcessoCliente(userDetails, clienteId);
-        Contrato novoContrato = contratoService.salvar(clienteId, contrato);
+        Contrato novoContrato = contratoService.salvar(clienteId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoContrato);
     }
 
     @Operation(summary = "Listar contratos", description = "ADMIN vê todos. CLIENTE vê apenas o próprio.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Histórico retornado com sucesso"),
-            @ApiResponse(responseCode = "403", description = "Acesso negado"),
-            @ApiResponse(responseCode = "401", description = "Token inválido ou não informado"),
-            @ApiResponse(responseCode = "404", description = "Contrato não encontrado")})
+    @ApiResponse(responseCode = "200", description = "Histórico retornado com sucesso")
+    @ApiResponse(responseCode = "403", description = "Acesso negado")
+    @ApiResponse(responseCode = "401", description = "Token inválido ou não informado")
+    @ApiResponse(responseCode = "404", description = "Contrato não encontrado")
     @GetMapping
     public ResponseEntity<List<Contrato>> listarPorCliente(
             @PathVariable UUID clienteId,
@@ -62,12 +59,10 @@ public class ContratoController {
     }
 
     @Operation(summary = "Buscar contratos por ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Contrato encontrado "),
-            @ApiResponse(responseCode = "403", description = "Acesso negado"),
-            @ApiResponse(responseCode = "401", description = "Token inválido ou não informado"),
-            @ApiResponse(responseCode = "404", description = "Contrato não encontrado")
-    })
+    @ApiResponse(responseCode = "200", description = "Contrato encontrado ")
+    @ApiResponse(responseCode = "403", description = "Acesso negado")
+    @ApiResponse(responseCode = "401", description = "Token inválido ou não informado")
+    @ApiResponse(responseCode = "404", description = "Contrato não encontrado")
     @GetMapping("/{contratoId}")
     public ResponseEntity<Contrato> buscarPorId(
             @PathVariable UUID clienteId,
