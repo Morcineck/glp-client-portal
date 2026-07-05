@@ -1,5 +1,6 @@
 package com.glp.client_portal.consumo;
 
+import com.glp.client_portal.consumo.dto.RegistrarConsumoRequest;
 import com.glp.client_portal.contrato.Contrato;
 import com.glp.client_portal.contrato.ContratoRepository;
 import com.glp.client_portal.exception.ResourceNotFoundException;
@@ -18,11 +19,15 @@ public class ConsumoService {
     @Autowired
     private ContratoRepository contratoRepository;
 
-    public ConsumoMensal registrarConsumo(UUID contratoId, ConsumoMensal consumo) {
+    public ConsumoMensal registrarConsumo(UUID contratoId, RegistrarConsumoRequest request) {
         Contrato contrato = contratoRepository.findById(contratoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Contrato com o ID [" + contratoId + "] não foi encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Contrato não foi encontrado"));
 
+        ConsumoMensal consumo = new ConsumoMensal();
         consumo.setContrato(contrato);
+        consumo.setMesReferencia(request.mesReferencia());
+        consumo.setKwhConsumido(request.kwhConsumido());
+        consumo.setCustoTotal(request.custoTotal());
         return consumoRepository.save(consumo);
 
     }
