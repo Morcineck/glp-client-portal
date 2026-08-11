@@ -15,6 +15,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -31,6 +32,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Environment variables
+.env
+.env.*
+!.env.example
 
 ### Application properties (contém credenciais sensíveis) ###
 application.properties
