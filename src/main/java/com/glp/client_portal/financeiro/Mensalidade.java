@@ -14,7 +14,7 @@ import java.time.YearMonth;
 import java.util.UUID;
 
 @Entity
-@Table(name = "mensalidade")
+@Table(name = "mensalidade", uniqueConstraints = @UniqueConstraint(\n        name = "uk_mensalidade_contrato_mes",\n        columnNames = {"contrato_id", "mes_referencia"}\n))
 @Data
 public class Mensalidade {
 
