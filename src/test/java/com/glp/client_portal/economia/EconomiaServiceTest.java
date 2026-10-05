@@ -4,6 +4,7 @@ import com.glp.client_portal.cliente.ClienteRepository;
 import com.glp.client_portal.contrato.Contrato;
 import com.glp.client_portal.contrato.ContratoRepository;
 import com.glp.client_portal.economia.dto.CalcularEconomiaRequest;
+import com.glp.client_portal.exception.IllegalArgumentBusinessException;
 import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +51,30 @@ class EconomiaServiceTest {
 
         assertEquals(new BigDecimal("350.00"), economia.getEconomiaGerada());
         assertSame(contrato, economia.getContrato());
+    }
+
+    @Test
+    void naoDeveRegistrarEconomiaDuplicadaNaMesmaCompetencia() {
+        UUID contratoId = UUID.randomUUID();
+        Contrato contrato = new Contrato();
+        contrato.setId(contratoId);
+        CalcularEconomiaRequest request = new CalcularEconomiaRequest(
+                YearMonth.of(2026, 9),
+                new BigDecimal("1000.00"),
+                new BigDecimal("650.00")
+        );
+
+        when(contratoRepository.findById(contratoId)).thenReturn(Optional.of(contrato));
+        when(economiaRepository.existsByContratoIdAndMesReferencia(
+                contratoId,
+                request.mesReferencia()
+        )).thenReturn(true);
+
+        assertThrows(
+                IllegalArgumentBusinessException.class,
+                () -> economiaService.calcularEconomia(contratoId, request)
+        );
+        verify(economiaRepository, never()).save(any(Economia.class));
     }
 
     @Test

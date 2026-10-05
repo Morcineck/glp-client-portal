@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/clientes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/clientes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/clientes/**").hasRole("ADMIN")
+                        .requestMatchers("/financeiro/**").hasRole("ADMIN")
                         .anyRequest().authenticated()    // Requer autenticação para todas as outras requisições
                 )
                 .sessionManagement(session -> session
