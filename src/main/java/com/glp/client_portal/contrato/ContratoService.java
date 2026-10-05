@@ -3,6 +3,7 @@ package com.glp.client_portal.contrato;
 import com.glp.client_portal.cliente.Cliente;
 import com.glp.client_portal.cliente.ClienteService;
 import com.glp.client_portal.contrato.dto.CriarContratoRequest;
+import com.glp.client_portal.exception.IllegalArgumentBusinessException;
 import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,12 @@ public class ContratoService {
     private ClienteService clienteService;
 
     public Contrato salvar(UUID clienteId, CriarContratoRequest request) {
+        if (request.dataFim().isBefore(request.dataInicio())) {
+            throw new IllegalArgumentBusinessException(
+                    "A data final do contrato não pode ser anterior à data inicial"
+            );
+        }
+
         Cliente cliente = clienteService.buscarPorId(clienteId);
         Contrato contrato = new Contrato();
         contrato.setCliente(cliente);
