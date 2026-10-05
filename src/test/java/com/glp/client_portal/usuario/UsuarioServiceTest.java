@@ -121,7 +121,7 @@ class UsuarioServiceTest {
                 .thenReturn(Optional.of(usuario));
         when(passwordEncoder.matches("errada", "hash")).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentBusinessException.class,
                 () -> usuarioService.alterarSenha("cliente@glp.com", request));
         verify(usuarioRepository, never()).save(any());
     }
