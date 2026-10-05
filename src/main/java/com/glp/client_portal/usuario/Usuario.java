@@ -39,8 +39,8 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id", unique = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Cliente cliente;
