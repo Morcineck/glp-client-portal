@@ -22,7 +22,12 @@ public class ClienteService {
         cliente.setNome(request.nome());
         cliente.setEmail(request.email());
         cliente.setTelefone(request.telefone());
-        cliente.setDocumento(request.documento());
+        cliente.setDocumento(
+                DocumentoFiscalValidator.validarENormalizar(
+                        request.documento(),
+                        request.tipoDocumento()
+                )
+        );
         cliente.setTipoDocumento(request.tipoDocumento());
         cliente.setDataCadastro(LocalDateTime.now());
         return clienteRepository.save(cliente);
@@ -42,7 +47,12 @@ public class ClienteService {
         cliente.setNome(request.nome());
         cliente.setEmail(request.email());
         cliente.setTelefone(request.telefone());
-        cliente.setDocumento(request.documento());
+        cliente.setDocumento(
+                DocumentoFiscalValidator.validarENormalizar(
+                        request.documento(),
+                        request.tipoDocumento()
+                )
+        );
         cliente.setTipoDocumento(request.tipoDocumento());
         return clienteRepository.save(cliente);
     }
