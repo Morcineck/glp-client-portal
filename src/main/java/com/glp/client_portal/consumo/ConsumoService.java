@@ -8,6 +8,7 @@ import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +48,8 @@ public class ConsumoService {
             );
         }
 
-        return consumoRepository.findByContratoIdOrderByMesReferenciaAsc(contratoId);
+        return consumoRepository.findByContratoId(contratoId).stream()
+                .sorted(Comparator.comparing(ConsumoMensal::getMesReferencia))
+                .toList();
     }
 }
