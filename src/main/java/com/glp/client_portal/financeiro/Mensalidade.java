@@ -26,6 +26,7 @@ public class Mensalidade {
     @JoinColumn(name = "contrato_id", nullable = false)
     private Contrato contrato;
 
+    @JsonFormat(pattern = "MM-yyyy")
     @Convert(converter = YearMonthConverter.class)
     @NotNull
     private YearMonth mesReferencia;
