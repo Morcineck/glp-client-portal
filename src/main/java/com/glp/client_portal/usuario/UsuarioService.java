@@ -49,7 +49,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         if (!passwordEncoder.matches(request.senhaAtual(), usuario.getSenha())) {
-            throw new IllegalArgumentException("Senha atual incorreta!");
+            throw new IllegalArgumentBusinessException("Senha atual incorreta!");
         }
 
         usuario.setSenha(passwordEncoder.encode(request.novaSenha()));
