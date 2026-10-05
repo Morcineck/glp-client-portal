@@ -3,6 +3,7 @@ package com.glp.client_portal.contrato;
 import com.glp.client_portal.cliente.Cliente;
 import com.glp.client_portal.cliente.ClienteService;
 import com.glp.client_portal.contrato.dto.CriarContratoRequest;
+import com.glp.client_portal.exception.IllegalArgumentBusinessException;
 import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,6 +70,30 @@ class ContratoServiceTest {
 
         assertEquals(1, contratos.size());
         verify(clienteService).buscarPorId(clienteId);
+    }
+
+    @Test
+    void deveRejeitarContratoComDataFinalAnteriorAInicial() {
+        UUID clienteId = UUID.randomUUID();
+        CriarContratoRequest request = new CriarContratoRequest(
+                "ENERGIA",
+                LocalDate.of(2027, 1, 1),
+                LocalDate.of(2026, 12, 31),
+                new BigDecimal("500.00"),
+                new BigDecimal("1000.00"),
+                new BigDecimal("800.00")
+        );
+
+        IllegalArgumentBusinessException exception = assertThrows(
+                IllegalArgumentBusinessException.class,
+                () -> contratoService.salvar(clienteId, request)
+        );
+
+        assertEquals(
+                "A data final do contrato não pode ser anterior à data inicial",
+                exception.getMessage()
+        );
+        verifyNoInteractions(clienteService, contratoRepository);
     }
 
     @Test
