@@ -6,9 +6,12 @@ import com.glp.client_portal.exception.IllegalArgumentBusinessException;
 import com.glp.client_portal.exception.ResourceNotFoundException;
 import com.glp.client_portal.usuario.dto.AlterarSenhaRequest;
 import com.glp.client_portal.usuario.dto.CriarUsuarioRequest;
+import com.glp.client_portal.usuario.dto.UsuarioResumoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -28,20 +31,36 @@ public class UsuarioService {
 
         Usuario usuario = new Usuario();
         usuario.setEmail(request.email());
-        usuario.setSenha(passwordEncoder.encode(request.senha()));
         usuario.setRole(request.role());
-
 
         if (request.role() == Role.CLIENTE) {
             if (request.clienteId() == null) {
                 throw new IllegalArgumentBusinessException(
                         "Usuário do tipo CLIENTE precisa estar vinculado a um cliente");
             }
+            if (usuarioRepository.existsByClienteId(request.clienteId())) {
+                throw new IllegalArgumentBusinessException(
+                        "Este cliente já possui um acesso ao portal"
+                );
+            }
+
             Cliente cliente = clienteService.buscarPorId(request.clienteId());
             usuario.setCliente(cliente);
         }
 
+        usuario.setSenha(passwordEncoder.encode(request.senha()));
         return usuarioRepository.save(usuario);
+    }
+
+    public List<UsuarioResumoResponse> listarResumos() {
+        return usuarioRepository.findAll().stream()
+                .map(usuario -> new UsuarioResumoResponse(
+                        usuario.getId(),
+                        usuario.getEmail(),
+                        usuario.getRole(),
+                        usuario.getCliente() != null ? usuario.getCliente().getId() : null
+                ))
+                .toList();
     }
 
     public void alterarSenha(String emailDoToken, AlterarSenhaRequest request) {
