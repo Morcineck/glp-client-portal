@@ -1,5 +1,6 @@
 package com.glp.client_portal.usuario.auth.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 public class SecurityConfig {
@@ -22,10 +24,19 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final boolean cookieSecure;
+    private final String cookieSameSite;
 
-    public SecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
+    public SecurityConfig(
+            JwtUtil jwtUtil,
+            UserDetailsServiceImpl userDetailsService,
+            @Value("${app.auth.cookie-secure:false}") boolean cookieSecure,
+            @Value("${app.auth.cookie-same-site:Lax}") String cookieSameSite
+    ) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        this.cookieSecure = cookieSecure;
+        this.cookieSameSite = cookieSameSite;
     }
 
     @Bean
@@ -36,11 +47,19 @@ public class SecurityConfig {
         CookieCsrfTokenRepository csrfRepository =
                 CookieCsrfTokenRepository.withHttpOnlyFalse();
         csrfRepository.setCookiePath("/");
+        csrfRepository.setCookieCustomizer(cookie -> cookie
+                .secure(cookieSecure)
+                .sameSite(cookieSameSite)
+        );
+
+        CsrfTokenRequestAttributeHandler csrfRequestHandler =
+                new CsrfTokenRequestAttributeHandler();
 
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(csrfRepository)
+                        .csrfTokenRequestHandler(csrfRequestHandler)
                         .ignoringRequestMatchers("/login")
                 )
                 .authorizeHttpRequests(authorize -> authorize
