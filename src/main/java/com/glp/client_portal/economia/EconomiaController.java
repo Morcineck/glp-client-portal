@@ -71,7 +71,6 @@ public class EconomiaController {
             @PathVariable UUID clienteId,
             @AuthenticationPrincipal UserDetails userDetails) {
         accessValidator.validarAcessoCliente(userDetails, clienteId);
-        accessValidator.validarContratoDoCliente(clienteId, contratoId);
         return ResponseEntity.ok(economiaService.totalEconomizadoPorCliente(clienteId));
     }
 }
