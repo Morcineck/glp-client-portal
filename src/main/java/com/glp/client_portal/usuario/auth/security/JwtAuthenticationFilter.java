@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         ErrorResponse erro = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.UNAUTHORIZED.value(),
-                "Token experido",
+                "Token expirado",
                 mensagemErro,
                 path,
                 null
