@@ -33,10 +33,10 @@ class UsuarioServiceTest {
     @Test
     void deveCadastrarAdministradorSemCliente() {
         CriarUsuarioRequest request = new CriarUsuarioRequest(
-                "admin@glp.com", "senha", Role.ADMIN, null
+                "admin@glp.com", "senha123", Role.ADMIN, null
         );
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
-        when(passwordEncoder.encode("senha")).thenReturn("hash");
+        when(passwordEncoder.encode("senha123")).thenReturn("hash");
         when(usuarioRepository.save(any(Usuario.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -53,11 +53,11 @@ class UsuarioServiceTest {
         Cliente cliente = new Cliente();
         cliente.setId(clienteId);
         CriarUsuarioRequest request = new CriarUsuarioRequest(
-                "cliente@glp.com", "senha", Role.CLIENTE, clienteId
+                "cliente@glp.com", "senha123", Role.CLIENTE, clienteId
         );
 
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
-        when(passwordEncoder.encode("senha")).thenReturn("hash");
+        when(passwordEncoder.encode("senha123")).thenReturn("hash");
         when(clienteService.buscarPorId(clienteId)).thenReturn(cliente);
         when(usuarioRepository.save(any(Usuario.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -71,7 +71,7 @@ class UsuarioServiceTest {
     @Test
     void naoDeveCadastrarEmailDuplicado() {
         CriarUsuarioRequest request = new CriarUsuarioRequest(
-                "duplicado@glp.com", "senha", Role.ADMIN, null
+                "duplicado@glp.com", "senha123", Role.ADMIN, null
         );
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(true);
 
@@ -83,10 +83,10 @@ class UsuarioServiceTest {
     @Test
     void clienteDeveTerClienteVinculado() {
         CriarUsuarioRequest request = new CriarUsuarioRequest(
-                "cliente@glp.com", "senha", Role.CLIENTE, null
+                "cliente@glp.com", "senha123", Role.CLIENTE, null
         );
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
-        when(passwordEncoder.encode("senha")).thenReturn("hash");
+        when(passwordEncoder.encode("senha123")).thenReturn("hash");
 
         assertThrows(IllegalArgumentBusinessException.class,
                 () -> usuarioService.cadastrar(request));
@@ -98,12 +98,12 @@ class UsuarioServiceTest {
         Usuario usuario = new Usuario();
         usuario.setEmail("cliente@glp.com");
         usuario.setSenha("hash-antigo");
-        AlterarSenhaRequest request = new AlterarSenhaRequest("antiga", "nova");
+        AlterarSenhaRequest request = new AlterarSenhaRequest("antiga", "novaSenha123");
 
         when(usuarioRepository.findByEmail(usuario.getEmail()))
                 .thenReturn(Optional.of(usuario));
         when(passwordEncoder.matches("antiga", "hash-antigo")).thenReturn(true);
-        when(passwordEncoder.encode("nova")).thenReturn("hash-novo");
+        when(passwordEncoder.encode("novaSenha123")).thenReturn("hash-novo");
 
         usuarioService.alterarSenha(usuario.getEmail(), request);
 
@@ -115,7 +115,7 @@ class UsuarioServiceTest {
     void naoDeveAlterarSenhaQuandoSenhaAtualEstaIncorreta() {
         Usuario usuario = new Usuario();
         usuario.setSenha("hash");
-        AlterarSenhaRequest request = new AlterarSenhaRequest("errada", "nova");
+        AlterarSenhaRequest request = new AlterarSenhaRequest("errada", "novaSenha123");
 
         when(usuarioRepository.findByEmail("cliente@glp.com"))
                 .thenReturn(Optional.of(usuario));
