@@ -69,6 +69,7 @@ public class ContratoController {
             @PathVariable UUID contratoId,
             @AuthenticationPrincipal UserDetails userDetails) {
         accessValidator.validarAcessoCliente(userDetails, clienteId);
+        accessValidator.validarContratoDoCliente(clienteId, contratoId);
         return ResponseEntity.ok(contratoService.buscarPorId(contratoId));
     }
 }
