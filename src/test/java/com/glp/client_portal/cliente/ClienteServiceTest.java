@@ -28,7 +28,7 @@ class ClienteServiceTest {
     void deveCadastrarClienteComDadosDaRequisicao() {
         CriarClienteRequest request = new CriarClienteRequest(
                 "Empresa Teste", "contato@teste.com", "21999999999",
-                "12345678000199", TipoDocumento.CNPJ
+                "04252011000110", TipoDocumento.CNPJ
         );
 
         when(clienteRepository.save(any(Cliente.class)))
@@ -42,6 +42,24 @@ class ClienteServiceTest {
         assertEquals(request.tipoDocumento(), cliente.getTipoDocumento());
         assertNotNull(cliente.getDataCadastro());
         verify(clienteRepository).save(cliente);
+    }
+
+    @Test
+    void deveRejeitarDocumentoFiscalInvalido() {
+        CriarClienteRequest request = new CriarClienteRequest(
+                "Empresa Teste",
+                "contato@teste.com",
+                "21999999999",
+                "12345678000199",
+                TipoDocumento.CNPJ
+        );
+
+        assertThrows(
+                com.glp.client_portal.exception.IllegalArgumentBusinessException.class,
+                () -> clienteService.salvar(request)
+        );
+
+        verify(clienteRepository, never()).save(any());
     }
 
     @Test
@@ -62,7 +80,7 @@ class ClienteServiceTest {
 
         AtualizarClienteRequest request = new AtualizarClienteRequest(
                 "Nome Novo", "novo@teste.com", "21888888888",
-                "12345678901", TipoDocumento.CPF
+                "52998224725", TipoDocumento.CPF
         );
 
         when(clienteRepository.findById(id)).thenReturn(Optional.of(cliente));
