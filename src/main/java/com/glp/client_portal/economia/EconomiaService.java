@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,7 +58,9 @@ public class EconomiaService {
             throw new ResourceNotFoundException("Contrato não encontrado com esse id");
         }
 
-        return economiaRepository.findByContratoIdOrderByMesReferenciaAsc(contratoId);
+        return economiaRepository.findByContratoId(contratoId).stream()
+                .sorted(Comparator.comparing(Economia::getMesReferencia))
+                .toList();
     }
 
     public BigDecimal totalEconomizadoPorCliente(UUID clienteId) {
