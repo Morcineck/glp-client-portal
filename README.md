@@ -1,205 +1,164 @@
 # GLP Client Portal
- 
-Sistema backend desenvolvido em Java com Spring Boot para a **GLP Consultoria Energética**, permitindo que clientes acompanhem informações sobre seus contratos de energia, consumo mensal e economia gerada.
- 
-Projeto desenvolvido para a empresa **GLP Consultoria**. O código-fonte disponibilizado representa a camada backend da aplicação e não contém informações sensíveis, credenciais ou dados de clientes.
- 
----
- 
-## 📋 Sobre o projeto
- 
-A GLP Consultoria Energética atua na gestão energética corporativa, ajudando empresas a reduzir custos e otimizar seu consumo de energia. O **GLP Client Portal** nasceu da necessidade de oferecer aos clientes da GLP um canal digital para acompanhar, de forma transparente, os contratos firmados, o consumo registrado mês a mês e a economia real gerada ao longo do tempo.
- 
-O sistema foi construído como uma **API REST**, desacoplada de qualquer interface visual, preparada para futuramente alimentar um frontend web ou mobile.
- 
----
- 
-## 🚀 Funcionalidades
- 
-O projeto está organizado em 4 módulos de domínio:
- 
-### Cliente
-- Cadastrar, listar, buscar, atualizar e remover clientes
-- Suporte a pessoa física (CPF) e jurídica (CNPJ)
-### Contrato
-- Criar contratos vinculados a um cliente
-- Listar contratos de um cliente
-- Consultar detalhes de um contrato específico
-### Consumo Mensal
-- Registrar o consumo de energia (kWh) e custo de um determinado mês
-- Consultar o histórico de consumo de um contrato
-### Economia
-- Calcular a economia gerada em um mês, comparando o custo antes e depois do contrato
-- Consultar o total economizado por um cliente, somando todos os contratos
----
- 
-## 🛠️ Tecnologias
- 
-- **Java 17**
-- **Spring Boot 4.1.0**
-- **Spring Data JPA** - persistência e acesso a dados
-- **Spring Validation (Bean Validation)** - validação de dados de entrada
-- **PostgreSQL** - banco de dados relacional
-- **Lombok** - redução de código repetitivo (getters, setters, etc.)
-- **Maven** - gerenciamento de dependências e build
-- **GitHub Actions** - pipeline de CI (build e testes automatizados em Pull Requests)
-### Ferramentas recomendadas para desenvolvimento
-- [IntelliJ IDEA](https://www.jetbrains.com/idea/)
-- [Postman](https://www.postman.com/) - para testar os endpoints da API
-- [pgAdmin](https://www.pgadmin.org/) ou [DBeaver](https://dbeaver.io/) - para administração do banco de dados
----
- 
-## 🏗️ Arquitetura
- 
-O projeto segue uma arquitetura de **monólito modular**, organizada por domínio de negócio (e não por camada técnica). Cada módulo contém sua própria Entity, Repository, Service e Controller:
- 
-```
+
+Backend do portal da **GLP Consultoria Energética**, desenvolvido como API REST em Java e Spring Boot. A aplicação centraliza clientes, contratos, consumo mensal, economia gerada, usuários e indicadores de dashboard, com autenticação JWT e autorização por perfil.
+
+## Funcionalidades da V1
+
+- gestão de clientes;
+- contratos vinculados a clientes;
+- registro e consulta de consumo mensal;
+- cálculo e histórico de economia;
+- usuários com perfis `ADMIN` e `CLIENTE`;
+- autenticação stateless com Spring Security + JWT;
+- isolamento de dados do cliente autenticado;
+- dashboard com visão global para ADMIN e visão restrita para CLIENTE;
+- relatório PDF;
+- documentação Swagger/OpenAPI;
+- tratamento global e padronizado de erros;
+- Docker/Docker Compose;
+- testes automatizados com JUnit 5 e Mockito;
+- CI com GitHub Actions.
+
+Gateway de pagamento **não faz parte do escopo da V1**.
+
+## Stack
+
+- Java 17
+- Spring Boot 4.1.0
+- Spring Web MVC
+- Spring Data JPA / Hibernate
+- Spring Security
+- JJWT
+- PostgreSQL
+- Bean Validation
+- springdoc OpenAPI
+- iText
+- Lombok
+- Maven
+- JUnit 5 / Mockito
+- Docker
+- GitHub Actions
+
+## Arquitetura
+
+O projeto utiliza um **monólito modular organizado por domínio**:
+
+```text
 com.glp.client_portal
 ├── cliente
 ├── contrato
 ├── consumo
 ├── economia
-├── converter      (conversores customizados para persistência)
-└── exception      (tratamento global de erros)
+├── dashboard
+├── usuario
+│   └── auth
+├── converter
+└── exception
 ```
- 
-Essa abordagem favorece a manutenibilidade do projeto à medida que ele cresce, mantendo tudo relacionado a um mesmo domínio (ex: Cliente) agrupado em um único lugar sem a complexidade operacional de uma arquitetura de microsserviços, que não se justifica para o escopo atual do projeto.
- 
-### Decisões técnicas relevantes
- 
-- **UUID como identificador**: como a API é exposta para clientes externos, IDs sequenciais foram descartados em favor de UUID, evitando enumeration attacks (varredura sequencial de recursos).
-- **BigDecimal para valores monetários e de consumo**: evita os erros de arredondamento característicos de `double`/`float`.
-- **YearMonth para mês de referência**: usado em `ConsumoMensal` e `Economia` para representar mês/ano de forma semanticamente correta, com um `AttributeConverter` customizado garantindo persistência legível no banco (texto, não binário).
-- **Tratamento de erros centralizado**: um `@RestControllerAdvice` único trata exceções de domínio (recurso não encontrado), erros de validação de campos e erros inesperados, retornando sempre uma resposta JSON padronizada.
----
- 
-## ⚙️ Como rodar o projeto localmente
- 
+
+As principais decisões incluem UUID para identificadores expostos pela API, `BigDecimal` para valores monetários/consumo e `YearMonth` para referências mensais.
+
+## Segurança
+
+O login retorna um JWT que deve ser enviado como `Bearer Token`.
+
+- `ADMIN`: operações administrativas e visão global.
+- `CLIENTE`: leitura limitada ao cliente vinculado ao usuário.
+- operações de criação/alteração/exclusão sob `/clientes/**` são administrativas;
+- o backend valida tanto o `clienteId` quanto o vínculo real do `contratoId`, evitando acesso cruzado entre clientes.
+
+Swagger permanece público para documentação; as demais rotas exigem autenticação, exceto o login.
+
+## Principais endpoints
+
+| Método | Rota | Finalidade |
+| --- | --- | --- |
+| POST | `/login` | Autenticação |
+| POST | `/usuarios` | Cadastro de usuário (ADMIN) |
+| PATCH | `/usuarios/alterar_senha` | Alteração da própria senha |
+| POST | `/clientes` | Cadastro de cliente (ADMIN) |
+| GET | `/clientes` | Lista conforme perfil |
+| GET | `/clientes/{id}` | Consulta de cliente |
+| PUT | `/clientes/{id}` | Atualização (ADMIN) |
+| DELETE | `/clientes/{id}` | Exclusão (ADMIN) |
+| POST | `/clientes/{clienteId}/contratos` | Criação de contrato (ADMIN) |
+| GET | `/clientes/{clienteId}/contratos` | Contratos do cliente |
+| GET | `/clientes/{clienteId}/contratos/{contratoId}` | Detalhe do contrato |
+| POST | `/clientes/{clienteId}/contratos/{contratoId}/consumos` | Registro de consumo (ADMIN) |
+| GET | `/clientes/{clienteId}/contratos/{contratoId}/consumos` | Histórico de consumo |
+| POST | `/clientes/{clienteId}/contratos/{contratoId}/economias` | Registro/cálculo de economia (ADMIN) |
+| GET | `/clientes/{clienteId}/contratos/{contratoId}/economias` | Histórico de economia |
+| GET | `/clientes/{clienteId}/total-economizado` | Total economizado |
+| GET | `/dashboard` | Indicadores conforme perfil |
+
+A documentação interativa fica disponível em `/swagger-ui/index.html`.
+
+## Executando localmente
+
 ### Pré-requisitos
-- Java 17 ou superior
+
+- Java 17+
 - Maven
-- PostgreSQL em execução
-### 1. Clone o repositório
- 
-```bash
-git clone https://github.com/Morcineck/glp-client-portal.git
-cd glp-client-portal
-```
- 
-### 2. Crie o banco de dados
- 
+- PostgreSQL
+
+Crie o banco:
+
 ```sql
 CREATE DATABASE glp_client_portal;
 ```
- 
-### 3. Configure o arquivo de propriedades
- 
-Copie o arquivo de exemplo:
- 
-```bash
-cp src/main/resources/application.properties.example src/main/resources/application.properties
-```
- 
-### 4. Configure as variáveis de ambiente
- 
-O projeto lê a senha do banco de dados a partir de uma variável de ambiente, nunca diretamente do código-fonte. Configure:
- 
-```
+
+Copie o arquivo de configuração de exemplo e defina as variáveis de ambiente:
+
+```text
 DB_USERNAME=postgres
-DB_PASSWORD=sua_senha_aqui
+DB_PASSWORD=sua_senha
+JWT_SECRET=uma_chave_secreta_forte
 ```
- 
-> No IntelliJ: **Run → Edit Configurations → Environment variables**
- 
-### 5. Execute o projeto
- 
+
+Depois execute:
+
 ```bash
 mvn spring-boot:run
 ```
- 
-A aplicação estará disponível em `http://localhost:8080`.
- 
----
- 
-## 📡 Endpoints principais
- 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `POST` | `/clientes` | Cadastra um novo cliente |
-| `GET` | `/clientes` | Lista todos os clientes |
-| `GET` | `/clientes/{id}` | Busca um cliente por ID |
-| `PUT` | `/clientes/{id}` | Atualiza um cliente |
-| `DELETE` | `/clientes/{id}` | Remove um cliente |
-| `POST` | `/clientes/{clienteId}/contratos` | Cria um contrato para um cliente |
-| `GET` | `/clientes/{clienteId}/contratos` | Lista contratos de um cliente |
-| `GET` | `/clientes/{clienteId}/contratos/{contratoId}` | Detalha um contrato |
-| `POST` | `/clientes/{clienteId}/contratos/{contratoId}/consumos` | Registra consumo mensal |
-| `GET` | `/clientes/{clienteId}/contratos/{contratoId}/consumos` | Lista histórico de consumo |
-| `POST` | `/clientes/{clienteId}/contratos/{contratoId}/economias` | Calcula economia de um mês |
-| `GET` | `/clientes/{clienteId}/contratos/{contratoId}/economias` | Lista economias de um contrato |
-| `GET` | `/clientes/{clienteId}/total-economizado` | Retorna o total economizado pelo cliente |
- 
-### Exemplo de requisição — Cadastrar cliente
- 
-```http
-POST /clientes
-Content-Type: application/json
- 
-{
-    "nome": "Empresa Exemplo LTDA",
-    "email": "contato@empresaexemplo.com",
-    "telefone": "11999999999",
-    "documento": "12345678000199",
-    "tipoDocumento": "CNPJ"
-}
+
+Por padrão, a API estará em `http://localhost:8080`.
+
+### Docker Compose
+
+Com `DB_PASSWORD` e `JWT_SECRET` definidos no ambiente:
+
+```bash
+docker compose up --build
 ```
- 
-### Exemplo de resposta de erro (validação)
- 
-```json
-{
-    "timestamp": "2026-06-27T20:11:21.05",
-    "status": 400,
-    "erro": "Dados de requisição inválidos",
-    "mensagem": "Houve erros de validação nos campos preenchidos",
-    "path": "/clientes",
-    "erros": [
-        {
-            "campo": "email",
-            "mensagem": "O email é obrigatório"
-        }
-    ]
-}
+
+O container da aplicação expõe a API em `http://localhost:8081`.
+
+## Testes
+
+Execute:
+
+```bash
+mvn test
 ```
- 
----
- 
-## 🌳 Fluxo de branches
- 
-O projeto segue um fluxo simplificado de Git Flow:
- 
-- **`main`** - código estável, validado, pronto para apresentação
-- **`develop`** - desenvolvimento ativo
-- **`feature/*`** ou **`refatoracao/*`** - branches temporárias para novas funcionalidades ou refatorações, mescladas em `develop` via Pull Request
-Todo Pull Request direcionado à `main` dispara automaticamente um workflow de build e testes via GitHub Actions.
- 
----
- 
-## 🗺️ Roadmap futuro
 
-####  Próximas melhorias
-- [ ] Autenticação e autorização (Spring Security + JWT)
-- [ ] Frontend web para consumo da API
-- [ ] Documentação interativa da API (Swagger/OpenAPI)
-- [ ] Testes automatizados (JUnit/Mockito)
-- [ ] Integração com gateway de pagamento
+A suíte cobre os serviços principais, autenticação, regras de usuário, dashboard e regras de ownership. Pull Requests para `develop` ou `main` executam testes e build pelo GitHub Actions.
 
-####  Próximas funcionalidades
-- [ ] Frontend web para consumo da API
-- [ ] Integração com gateway de pagamento
+## Git Flow
 
----
- 
-## 👤 Autor
- 
+Fluxo obrigatório do projeto:
+
+```text
+feature/* ou fix/* → develop → main
+```
+
+- `develop` recebe o trabalho em andamento por Pull Request.
+- `main` representa a versão estável.
+- a integração `develop → main` é feita manualmente pelo mantenedor após validação.
+
+## Próxima fase
+
+Após o fechamento do backend V1, a próxima etapa é revisar e integrar o frontend web ao contrato atual da API.
+
+## Autor
+
 Desenvolvido por **Robson Morcineck** para GLP Consultoria Energética.
