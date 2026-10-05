@@ -41,6 +41,7 @@ public class ConsumoController {
             @AuthenticationPrincipal UserDetails userDetails) {
 
         accessValidator.validarAcessoCliente(userDetails, clienteId);
+        accessValidator.validarContratoDoCliente(clienteId, contratoId);
 
         ConsumoMensal novoConsumo = consumoService.registrarConsumo(contratoId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoConsumo);
@@ -57,6 +58,7 @@ public class ConsumoController {
             @PathVariable UUID contratoId,
             @AuthenticationPrincipal UserDetails userDetails) {
         accessValidator.validarAcessoCliente(userDetails, clienteId);
+        accessValidator.validarContratoDoCliente(clienteId, contratoId);
         List<ConsumoMensal> historico = consumoService.listarPorContrato(contratoId);
         return ResponseEntity.ok(historico);
     }

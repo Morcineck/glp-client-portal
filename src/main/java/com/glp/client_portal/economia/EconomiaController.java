@@ -42,6 +42,7 @@ public class EconomiaController {
             @Valid @RequestBody CalcularEconomiaRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
         accessValidator.validarAcessoCliente(userDetails, clienteId);
+        accessValidator.validarContratoDoCliente(clienteId, contratoId);
 
         Economia navaEconomia = economiaService.calcularEconomia(contratoId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(navaEconomia);
@@ -56,6 +57,7 @@ public class EconomiaController {
             @PathVariable UUID contratoId,
             @AuthenticationPrincipal UserDetails userDetails) {
         accessValidator.validarAcessoCliente(userDetails, clienteId);
+        accessValidator.validarContratoDoCliente(clienteId, contratoId);
         return ResponseEntity.ok(economiaService.listarPorContrato(contratoId));
     }
 
