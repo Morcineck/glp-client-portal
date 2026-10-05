@@ -3,6 +3,7 @@ package com.glp.client_portal.usuario;
 
 import com.glp.client_portal.usuario.dto.AlterarSenhaRequest;
 import com.glp.client_portal.usuario.dto.CriarUsuarioRequest;
+import com.glp.client_portal.usuario.dto.UsuarioResumoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @SecurityRequirement(name = "bearerAuth")
 @RestController
@@ -37,6 +40,12 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
 
+
+    @Operation(summary = "Listar usuários", description = "Lista usuários e vínculos de acesso. Restrito a ADMIN.")
+    @GetMapping
+    public ResponseEntity<List<UsuarioResumoResponse>> listar() {
+        return ResponseEntity.ok(usuarioService.listarResumos());
+    }
 
     @Operation(summary = "Alterar senha")
     @ApiResponse(responseCode = "204", description = "Senha alterada com sucesso")
