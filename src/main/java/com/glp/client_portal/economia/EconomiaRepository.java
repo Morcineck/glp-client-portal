@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface EconomiaRepository extends JpaRepository<Economia, UUID> {
 
+    List<Economia> findByContratoId(UUID contratoId);
+
     List<Economia> findByContratoIdOrderByMesReferenciaAsc(UUID contratoId);
 
     List<Economia> findByContratoClienteId(UUID clienteId);
