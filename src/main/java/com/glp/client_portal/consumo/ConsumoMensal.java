@@ -14,7 +14,10 @@ import java.util.UUID;
 
 @Entity
 @JsonPropertyOrder({"id", "contrato", "mesReferencia", "kwhConsumido", "custoTotal"})
-@Table(name = "consumo_mensal", uniqueConstraints = @UniqueConstraint(\n        name = "uk_consumo_contrato_mes",\n        columnNames = {"contrato_id", "mes_referencia"}\n))
+@Table(name = "consumo_mensal", uniqueConstraints = @UniqueConstraint(
+        name = "uk_consumo_contrato_mes",
+        columnNames = {"contrato_id", "mes_referencia"}
+))
 @Data
 public class ConsumoMensal {
 
