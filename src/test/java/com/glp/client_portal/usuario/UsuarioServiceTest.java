@@ -107,8 +107,6 @@ class UsuarioServiceTest {
                 "cliente@glp.com", "senha", Role.CLIENTE, null
         );
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
-        when(passwordEncoder.encode("senha")).thenReturn("hash");
-
         assertThrows(IllegalArgumentBusinessException.class,
                 () -> usuarioService.cadastrar(request));
         verify(usuarioRepository, never()).save(any());
