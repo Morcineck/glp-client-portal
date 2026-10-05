@@ -3,6 +3,7 @@ package com.glp.client_portal.consumo;
 import com.glp.client_portal.consumo.dto.RegistrarConsumoRequest;
 import com.glp.client_portal.contrato.Contrato;
 import com.glp.client_portal.contrato.ContratoRepository;
+import com.glp.client_portal.exception.IllegalArgumentBusinessException;
 import com.glp.client_portal.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,6 +65,30 @@ class ConsumoServiceTest {
         assertThrows(ResourceNotFoundException.class,
                 () -> consumoService.registrarConsumo(contratoId, request));
         verifyNoInteractions(consumoRepository);
+    }
+
+    @Test
+    void naoDeveRegistrarConsumoDuplicadoNaMesmaCompetencia() {
+        UUID contratoId = UUID.randomUUID();
+        Contrato contrato = new Contrato();
+        contrato.setId(contratoId);
+        RegistrarConsumoRequest request = new RegistrarConsumoRequest(
+                YearMonth.of(2026, 9),
+                new BigDecimal("750.50"),
+                new BigDecimal("620.30")
+        );
+
+        when(contratoRepository.findById(contratoId)).thenReturn(Optional.of(contrato));
+        when(consumoRepository.existsByContratoIdAndMesReferencia(
+                contratoId,
+                request.mesReferencia()
+        )).thenReturn(true);
+
+        assertThrows(
+                IllegalArgumentBusinessException.class,
+                () -> consumoService.registrarConsumo(contratoId, request)
+        );
+        verify(consumoRepository, never()).save(any(ConsumoMensal.class));
     }
 
     @Test
