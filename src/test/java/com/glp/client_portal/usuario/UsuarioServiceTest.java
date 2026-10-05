@@ -57,6 +57,7 @@ class UsuarioServiceTest {
         );
 
         when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
+        when(usuarioRepository.existsByClienteId(clienteId)).thenReturn(false);
         when(passwordEncoder.encode("senha")).thenReturn("hash");
         when(clienteService.buscarPorId(clienteId)).thenReturn(cliente);
         when(usuarioRepository.save(any(Usuario.class)))
@@ -66,6 +67,26 @@ class UsuarioServiceTest {
 
         assertSame(cliente, usuario.getCliente());
         assertEquals(Role.CLIENTE, usuario.getRole());
+    }
+
+    @Test
+    void naoDeveCadastrarSegundoAcessoParaMesmoCliente() {
+        UUID clienteId = UUID.randomUUID();
+        CriarUsuarioRequest request = new CriarUsuarioRequest(
+                "outro@glp.com", "Senha123", Role.CLIENTE, clienteId
+        );
+
+        when(usuarioRepository.existsByEmail(request.email())).thenReturn(false);
+        when(usuarioRepository.existsByClienteId(clienteId)).thenReturn(true);
+
+        IllegalArgumentBusinessException exception = assertThrows(
+                IllegalArgumentBusinessException.class,
+                () -> usuarioService.cadastrar(request)
+        );
+
+        assertEquals("Este cliente já possui um acesso ao portal", exception.getMessage());
+        verify(usuarioRepository, never()).save(any());
+        verifyNoInteractions(clienteService);
     }
 
     @Test
