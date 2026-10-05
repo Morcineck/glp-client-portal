@@ -46,8 +46,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll() // Permite acesso ao endpoint de login sem autenticação
-                        // Rotas só para ADMIN
-                        .requestMatchers(HttpMethod.POST, "/usuarios").hasRole("ADMIN")    // Permite acesso ao endpoint POST /usuario apenas pelo ADMIN
+                        // Operações administrativas
+                        .requestMatchers(HttpMethod.POST, "/usuarios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/clientes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/clientes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/clientes/**").hasRole("ADMIN")
                         .anyRequest().authenticated()    // Requer autenticação para todas as outras requisições
                 )
                 .sessionManagement(session -> session
