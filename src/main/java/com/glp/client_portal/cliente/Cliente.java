@@ -12,8 +12,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -51,8 +49,8 @@ public class Cliente {
     private LocalDateTime dataCadastro;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "cliente")
+    @OneToOne(mappedBy = "cliente")
     @lombok.ToString.Exclude
     @lombok.EqualsAndHashCode.Exclude
-    private List<Usuario> usuarios = new ArrayList<>();
+    private Usuario usuario;
 }
