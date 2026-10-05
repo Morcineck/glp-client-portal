@@ -10,6 +10,8 @@ import java.util.UUID;
 @Repository
 public interface ConsumoRepository extends JpaRepository<ConsumoMensal, UUID> {
 
+    List<ConsumoMensal> findByContratoId(UUID contratoId);
+
     List<ConsumoMensal> findByContratoIdOrderByMesReferenciaAsc(UUID contratoId);
 
     boolean existsByContratoIdAndMesReferencia(UUID contratoId, YearMonth mesReferencia);
